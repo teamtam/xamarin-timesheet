@@ -13,23 +13,19 @@ using TimesheetX.Services;
 namespace TimesheetX.Android
 {
     [Activity(Label = "TimesheetX.Android", MainLauncher = true, Icon = "@drawable/icon")]
-    public class MainActivity : ListActivity
+    public class MainActivity : Activity
     {
-        int count = 1;
+        ListView listView;
 
         protected async override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
-            var hello = (await TimesheetService.GetTimesheetEntries()).Select(ts => ts.Date.ToString()).ToArray();
-            this.ListAdapter = new ArrayAdapter<string>(this, Android.Resource.Layout.OutstandingTimesheets, hello);
+            var timesheets = await TimesheetService.GetTimesheetEntries();
 
-            //// Set our view from the "main" layout resource
-            //SetContentView(Resource.Layout.Main);
-
-            //// Get our button from the layout resource,
-            //// and attach an event to it
-            //Button button = FindViewById<Button>(Resource.Id.MyButton);
+            SetContentView(Resource.Layout.OutstandingTimesheets);
+            listView = FindViewById<ListView>(Resource.Id.List);
+            listView.Adapter = new OutstandingTimesheetsAdapter(this, timesheets.ToList());
 
             //button.Click += delegate { button.Text = string.Format("{0} clicks!", count++); };
         }
