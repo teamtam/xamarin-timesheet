@@ -112,7 +112,7 @@ namespace TimesheetX.Android
 			public const int Space = 2131034129;
 			
 			// aapt resource value: 0x7f050012
-			public const int Submit = 2131034130;
+			public const int SubmitButton = 2131034130;
 			
 			// aapt resource value: 0x7f050001
 			public const int Text = 2131034113;
