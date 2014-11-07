@@ -5,80 +5,83 @@
     android:layout_gravity="fill"
     android:rowCount="7"
     android:columnCount="2"
-    android:paddingLeft="10dp">
-    <TextView
-        android:id="@+id/Date"
-        android:text="Date"
-        android:textSize="14dip"
-        android:textColor="#FFFF"
-        android:textStyle="bold"
-        android:padding="5dp" />
-    <TextView
-        android:text="Cell 1"
-        android:textSize="14dip"
-        android:padding="5dp" />
-    <TextView
-        android:id="@+id/Customer"
-        android:text="Customer"
-        android:textSize="14dip"
-        android:textColor="#FFFF"
-        android:textStyle="bold"
-        android:padding="5dp" />
-    <TextView
-        android:text="Cell 3"
-        android:textSize="14dip"
-        android:padding="5dp" />
-    <TextView
-        android:id="@+id/Project"
-        android:text="Project"
-        android:textSize="14dip"
-        android:textColor="#FFFF"
-        android:textStyle="bold"
-        android:padding="5dp" />
-    <TextView
-        android:text="Cell 5"
-        android:textSize="14dip"
-        android:padding="5dp" />
-    <TextView
-        android:id="@+id/Hours"
-        android:text="Hours"
-        android:textSize="14dip"
-        android:textColor="#FFFF"
-        android:textStyle="bold"
-        android:padding="5dp" />
-    <TextView
-        android:text="Cell 7"
-        android:textSize="14dip"
-        android:padding="5dp" />
-    <TextView
-        android:id="@+id/Comment"
-        android:text="Comment"
-        android:textSize="14dip"
-        android:textColor="#FFFF"
-        android:textStyle="bold"
-        android:padding="5dp" />
-    <TextView
-        android:text="Cell 9"
-        android:textSize="14dip"
-        android:padding="5dp" />
-    <TextView
-        android:id="@+id/SickLeave"
-        android:text="SickLeave"
-        android:textSize="14dip"
-        android:textColor="#FFFF"
-        android:textStyle="bold"
-        android:padding="5dp" />
-    <TextView
-        android:text="Cell 11"
-        android:textSize="14dip"
-        android:padding="5dp" />
-    <Button
-        android:id="@+id/Submit"
-        android:text="Submit"
-        android:textSize="14dip"
-        android:textColor="#FFFF"
-        android:textStyle="bold"
-        android:padding="5dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_columnSpan="2" />
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
+  <TextView
+      android:id="@+id/DateHeading"
+      android:text="Date"
+      android:textSize="14dip"
+      android:textColor="#FFFF"
+      android:textStyle="bold"
+      android:padding="5dp" />
+  <TextView
+      android:id="@+id/DateText"
+      android:textSize="14dip"
+      android:padding="5dp" />
+  <TextView
+      android:id="@+id/CustomerHeading"
+      android:text="Customer"
+      android:textSize="14dip"
+      android:textColor="#FFFF"
+      android:textStyle="bold"
+      android:padding="5dp" />
+  <TextView
+      android:id="@+id/CustomerText"
+      android:textSize="14dip"
+      android:padding="5dp" />
+  <TextView
+      android:id="@+id/ProjectHeading"
+      android:text="Project"
+      android:textSize="14dip"
+      android:textColor="#FFFF"
+      android:textStyle="bold"
+      android:padding="5dp" />
+  <TextView
+      android:id="@+id/ProjectText"
+      android:textSize="14dip"
+      android:padding="5dp" />
+  <TextView
+      android:id="@+id/HoursHeading"
+      android:text="Hours"
+      android:textSize="14dip"
+      android:textColor="#FFFF"
+      android:textStyle="bold"
+      android:padding="5dp" />
+  <Spinner
+      android:id="@+id/HoursInput"
+      android:layout_width="100dp"
+      android:layout_height="wrap_content" />
+  <TextView
+      android:id="@+id/CommentHeading"
+      android:text="Comment"
+      android:textSize="14dip"
+      android:textColor="#FFFF"
+      android:textStyle="bold"
+      android:padding="5dp" />
+  <EditText
+      android:id="@+id/CommentInput"
+      android:textSize="14dip"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
+  <TextView
+      android:id="@+id/SickLeaveHeading"
+      android:text="SickLeave"
+      android:textSize="14dip"
+      android:textColor="#FFFF"
+      android:textStyle="bold"
+      android:padding="5dp" />
+  <Switch
+      android:id="@+id/SickLeaveInput"
+      android:layout_marginLeft="1dp" />
+  <Space
+      android:id="@+id/Space"
+      android:layout_width="100dp"
+      android:layout_height="100dp" />
+  <Button
+      android:id="@+id/SubmitButton"
+      android:text="Submit"
+      android:textSize="14dip"
+      android:textColor="#FFFF"
+      android:textStyle="bold"
+      android:layout_marginTop="10dp" />
 </GridLayout>

@@ -12,7 +12,7 @@ using TimesheetX.Services;
 
 namespace TimesheetX.Android
 {
-    [Activity(Label = "TimesheetX.Android", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "Outstanding Timesheets", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity
     {
         private ListView listView;
