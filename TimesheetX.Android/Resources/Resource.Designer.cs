@@ -60,17 +60,29 @@ namespace TimesheetX.Android
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f050006
+			public const int Comment = 2131034118;
+			
 			// aapt resource value: 0x7f050003
 			public const int Customer = 2131034115;
 			
 			// aapt resource value: 0x7f050002
 			public const int Date = 2131034114;
 			
+			// aapt resource value: 0x7f050005
+			public const int Hours = 2131034117;
+			
 			// aapt resource value: 0x7f050000
 			public const int List = 2131034112;
 			
 			// aapt resource value: 0x7f050004
 			public const int Project = 2131034116;
+			
+			// aapt resource value: 0x7f050007
+			public const int SickLeave = 2131034119;
+			
+			// aapt resource value: 0x7f050008
+			public const int Submit = 2131034120;
 			
 			// aapt resource value: 0x7f050001
 			public const int Text = 2131034113;
@@ -93,6 +105,9 @@ namespace TimesheetX.Android
 			
 			// aapt resource value: 0x7f030001
 			public const int OutstandingTimesheetsRow = 2130903041;
+			
+			// aapt resource value: 0x7f030002
+			public const int TimesheetEntry = 2130903042;
 			
 			static Layout()
 			{

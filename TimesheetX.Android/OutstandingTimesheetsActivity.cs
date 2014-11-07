@@ -15,7 +15,8 @@ namespace TimesheetX.Android
     [Activity(Label = "TimesheetX.Android", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity
     {
-        ListView listView;
+        private ListView listView;
+        private OutstandingTimesheetsAdapter adapter;
 
         protected async override void OnCreate(Bundle bundle)
         {
@@ -25,9 +26,19 @@ namespace TimesheetX.Android
 
             SetContentView(Resource.Layout.OutstandingTimesheets);
             listView = FindViewById<ListView>(Resource.Id.List);
-            listView.Adapter = new OutstandingTimesheetsAdapter(this, timesheets.ToList());
+            adapter = new OutstandingTimesheetsAdapter(this, timesheets.ToList());
+            listView.Adapter = adapter;
+            listView.ItemClick += OnListViewRowClick;
+        }
 
-            //button.Click += delegate { button.Text = string.Format("{0} clicks!", count++); };
+        protected void OnListViewRowClick(object sender, AdapterView.ItemClickEventArgs e)
+        {
+            var timesheet = adapter[e.Position];
+            var intent = new Intent(this, typeof(TimesheetEntryActivity));
+            intent.PutExtra("Date", timesheet.Date.ToString("dd MMM yyyy"));
+            intent.PutExtra("Customer", timesheet.Customer);
+            intent.PutExtra("Project", timesheet.Project);
+            StartActivity(intent);
         }
     }
 }
