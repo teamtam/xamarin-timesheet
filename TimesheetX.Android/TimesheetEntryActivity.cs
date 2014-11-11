@@ -35,14 +35,34 @@ namespace TimesheetX.Android
             var submitButton = FindViewById<Button>(Resource.Id.SubmitButton);
             submitButton.Click += async (sender, e) =>
             {
-                TimesheetEntry timesheet = new TimesheetEntry();
+                var timesheet = new TimesheetEntry();
                 timesheet.Date = DateTime.ParseExact(dateText.Text, "dd MMM yyyy", CultureInfo.InvariantCulture);
                 timesheet.Customer = customerText.Text;
                 timesheet.Project = projectText.Text;
                 timesheet.Hours = Convert.ToDecimal(hoursInput.SelectedItem.ToString());
                 timesheet.Comment = commentInput.Text;
                 timesheet.SickLeave = sickLeaveInput.Checked;
-                await TimesheetService.SubmitTimesheetEntry(timesheet);
+                var progress = new ProgressDialog(this);
+                progress.Indeterminate = true;
+                progress.SetProgressStyle(ProgressDialogStyle.Spinner);
+                progress.SetMessage("Contacting server. Please wait...");
+                progress.SetCancelable(false);
+                progress.Show();
+                try
+                {
+                    await TimesheetService.SubmitTimesheetEntry(timesheet);
+                    var intent = new Intent(this, typeof(MainActivity));
+                    StartActivity(intent);
+                }
+                catch
+                {
+                    var alert = new AlertDialog.Builder(this);
+                    alert.SetTitle("Network Error");
+                    alert.SetMessage("Could not contact the server - please try again later.");
+                    alert.SetNeutralButton("OK", (senderAlert, args) => { });
+                    alert.Show();
+                }
+                progress.Hide();
             };
         }
 

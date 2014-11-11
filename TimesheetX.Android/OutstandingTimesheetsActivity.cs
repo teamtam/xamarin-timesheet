@@ -9,6 +9,7 @@ using Android.Widget;
 using Android.OS;
 using TimesheetX.Models;
 using TimesheetX.Services;
+using Android.Content.PM;
 
 namespace TimesheetX.Android
 {
@@ -21,14 +22,29 @@ namespace TimesheetX.Android
         protected async override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-
-            var timesheets = await TimesheetService.GetTimesheetEntries();
-
+            var progress = new ProgressDialog(this);
+            progress.Indeterminate = true;
+            progress.SetProgressStyle(ProgressDialogStyle.Spinner);
+            progress.SetMessage("Contacting server. Please wait...");
+            progress.SetCancelable(false);
+            progress.Show();
             SetContentView(Resource.Layout.OutstandingTimesheets);
             listView = FindViewById<ListView>(Resource.Id.List);
-            adapter = new OutstandingTimesheetsAdapter(this, timesheets.ToList());
-            listView.Adapter = adapter;
             listView.ItemClick += OnListViewRowClick;
+            try
+            {
+                adapter = new OutstandingTimesheetsAdapter(this, (await TimesheetService.GetTimesheetEntries()).ToList());
+                listView.Adapter = adapter;
+            }
+            catch
+            {
+                var alert = new AlertDialog.Builder(this);
+                alert.SetTitle("Network Error");
+                alert.SetMessage("Could not contact the server - please try again later.");
+                alert.SetNeutralButton("OK", (senderAlert, args) => { });
+                alert.Show();
+            }
+            progress.Hide();
         }
 
         protected void OnListViewRowClick(object sender, AdapterView.ItemClickEventArgs e)
