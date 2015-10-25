@@ -35,10 +35,19 @@ namespace TimesheetX.Android
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var item = items[position];
-            var view = convertView ?? context.LayoutInflater.Inflate(Resource.Layout.OutstandingTimesheetsRow, null);
-            view.FindViewById<TextView>(Resource.Id.Date).Text = item.Date.ToString("dd MMM yyyy");
-            view.FindViewById<TextView>(Resource.Id.Customer).Text = item.Customer;
-            view.FindViewById<TextView>(Resource.Id.Project).Text = item.Project;
+            var view = convertView;
+            if (view == null)
+            {
+                view = context.LayoutInflater.Inflate(Resource.Layout.OutstandingTimesheetsRow, parent, false);
+                var dateView = view.FindViewById<TextView>(Resource.Id.Date);
+                var customerView = view.FindViewById<TextView>(Resource.Id.Customer);
+                var projectView = view.FindViewById<TextView>(Resource.Id.Project);
+                view.Tag = new TimesheetEntryViewHolder() { Date = dateView, Customer = customerView, Project = projectView };
+            }
+            var viewHolder = (TimesheetEntryViewHolder) view.Tag;
+            viewHolder.Date.Text = item.Date.ToString("dd MMM yyyy");
+            viewHolder.Customer.Text = item.Customer;
+            viewHolder.Project.Text = item.Project;
             return view;
         }
     }
