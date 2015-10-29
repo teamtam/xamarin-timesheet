@@ -82,12 +82,9 @@ namespace TimesheetX.iOS.Code
             var hoursField = new UIPickerView()
             {
                 Frame = new CGRect(100, 160, View.Bounds.Width - 120, 40),
-                //KeyboardType = UIKeyboardType.NumberPad,
-                //BorderStyle = UITextBorderStyle.RoundedRect,
-                //Placeholder = "Hours"
-                
             };
             hoursField.Model = new TimesheetEntryHoursViewModel();
+            hoursField.Select(32, 0, true);
             View.AddSubview(hoursField);
 
             var commentLabel = new UILabel()
@@ -157,9 +154,15 @@ namespace TimesheetX.iOS.Code
             return Hours.Count;
         }
 
-        public override string GetTitle(UIPickerView picker, nint row, nint component)
+        public override UIView GetView(UIPickerView pickerView, nint row, nint component, UIView view)
         {
-            return Hours.ElementAt(Convert.ToInt32(row)).ToString();
+            var label = new UILabel();
+            label.Text = Hours.ElementAt(Convert.ToInt32(row)).ToString();
+            label.BackgroundColor = UIColor.Clear;
+            label.TextAlignment = UITextAlignment.Center;
+            label.Font = UIFont.SystemFontOfSize(12);
+            label.TextColor = UIColor.Black;
+            return label;
         }
     }
 }
