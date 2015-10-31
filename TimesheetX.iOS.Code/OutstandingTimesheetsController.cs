@@ -1,28 +1,50 @@
-﻿using CoreGraphics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Foundation;
 using UIKit;
+using TimesheetX.Models;
+using TimesheetX.Services;
 
 namespace TimesheetX.iOS.Code
 {
-    public partial class OutstandingTimesheetsController : UIViewController
+    public partial class OutstandingTimesheetsController : UITableViewController
     {
+        private IList<TimesheetEntry> Timesheets;
+
         public OutstandingTimesheetsController() : base("OutstandingTimesheetsController", null)
         {
         }
 
-        public override void ViewDidLoad()
+        public async override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            this.View.BackgroundColor = UIColor.Cyan;
-
-            var emailEntry = new UITextField()
+            TableView.ContentInset = new UIEdgeInsets(20, 0, 0, 0);
+            // TODO: progress indicator
+            try
             {
-                Frame = new CGRect(10, 20, View.Bounds.Width - 20, 35),
-                KeyboardType = UIKeyboardType.EmailAddress,
-                BorderStyle = UITextBorderStyle.RoundedRect,
-                Placeholder = "Email  Address"
-            };
-            View.AddSubview(emailEntry);
+                Timesheets = (await TimesheetService.GetTimesheetEntries()).ToList();
+            }
+            catch (Exception)
+            {
+                // TODO: modal error message
+            }
+        }
+
+        public override nint RowsInSection(UITableView tableview, nint section)
+        {
+            return Timesheets.Count;
+        }
+
+        public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
+        {
+            // TODO: custom table cell https://developer.xamarin.com/guides/ios/user_interface/tables/part_3_-_customizing_a_table's_appearance/
+            var timesheet = Timesheets.ElementAt(indexPath.Row);
+            var cell = new UITableViewCell(UITableViewCellStyle.Subtitle, null);
+            cell.TextLabel.Text = timesheet.Date.ToString("dd MMM yyyy");
+            cell.DetailTextLabel.Text = timesheet.Customer + ": " + timesheet.Project;
+            return cell;
         }
     }
 }

@@ -97,8 +97,6 @@
       <DependentUpon>OutstandingTimesheetsController.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <InterfaceDefinition Include="OutstandingTimesheetsController.xib" />
-    <InterfaceDefinition Include="TimesheetEntryController.xib" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h@2x.png" />
@@ -111,6 +109,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Entitlements.plist" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TimesheetX\TimesheetX.csproj">
+      <Project>{5fd318ed-9fec-4f11-867e-b6425de0dd02}</Project>
+      <Name>TimesheetX</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
