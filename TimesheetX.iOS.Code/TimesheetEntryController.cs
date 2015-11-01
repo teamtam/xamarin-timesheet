@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CoreGraphics;
 using UIKit;
+using TimesheetX.Models;
+using TimesheetX.Services;
 
 namespace TimesheetX.iOS.Code
 {
     public partial class TimesheetEntryController : UIViewController
     {
+        public TimesheetEntry TimesheetEntry;
+
         public TimesheetEntryController() : base("TimesheetEntryController", null)
         {
         }
@@ -16,171 +21,175 @@ namespace TimesheetX.iOS.Code
         {
             base.ViewDidLoad();
 
-            CreateDateLabel();
-            CreateDateField();
-            CreateCustomerLabel();
-            CreateCustomerField();
-            CreateProjectLabel();
-            CreateProjectField();
-            CreateHoursLabel();
-            CreateHoursField();
-            CreateCommentLabel();
-            CreateCommentField();
-            CreateSickLeaveLabel();
-            CreateSickLeaveField();
-            CreateSubmitButton();
-        }
+            var dateLabel = CreateDateLabel();
+            var dateField = CreateDateField();
+            var customerLabel = CreateCustomerLabel();
+            var customerField = CreateCustomerField();
+            var projectLabel = CreateProjectLabel();
+            var projectField = CreateProjectField();
+            var hoursLabel = CreateHoursLabel();
+            var hoursField = CreateHoursField();
+            var commentLabel = CreateCommentLabel();
+            var commentField = CreateCommentField();
+            var sickLeaveLabel = CreateSickLeaveLabel();
+            var sickLeaveField = CreateSickLeaveField();
+            var submitButton = CreateSubmitButton();
 
-        private void CreateDateLabel()
-        {
-            var dateLabel = new UILabel()
+            submitButton.TouchUpInside += (sender, e) =>
             {
-                Frame = new CGRect(20, 40, 80, 32),
-                Font = UIFont.BoldSystemFontOfSize(12),
-                TextAlignment = UITextAlignment.Left,
-                Text = "Date"
+                var timesheetEntryHoursViewModel = (TimesheetEntryHoursViewModel)hoursField.Model;
+                var selectedHours = timesheetEntryHoursViewModel.SelectedValue(hoursField, hoursField.SelectedRowInComponent(0), 0);
+                TimesheetEntry.Hours = Convert.ToDecimal(selectedHours);
+                TimesheetEntry.Comment = commentField.Text;
+                TimesheetEntry.SickLeave = sickLeaveField.On;
+                //Task.Run(TimesheetService.SubmitTimesheetEntry(TimesheetEntry)).Result; // TODO: async & spinner & error
+                NavigationController.PopViewController(true);
             };
-            View.AddSubview(dateLabel);
+
+            View.AddSubviews(dateLabel, dateField, customerLabel, customerField, projectLabel, projectField, hoursLabel, hoursField, commentLabel, commentField, sickLeaveLabel, sickLeaveField, submitButton);
         }
 
-        private void CreateDateField()
+        private UILabel CreateDateLabel()
         {
-            var dateField = new UILabel()
-            {
-                Frame = new CGRect(100, 40, View.Bounds.Width - 120, 32),
-                Font = UIFont.SystemFontOfSize(12),
-                TextAlignment = UITextAlignment.Left,
-                Text = "10/10/2015"
-            };
-            View.AddSubview(dateField);
-        }
-
-        private void CreateCustomerLabel()
-        {
-            var customerLabel = new UILabel()
+            return new UILabel()
             {
                 Frame = new CGRect(20, 80, 80, 32),
                 Font = UIFont.BoldSystemFontOfSize(12),
                 TextAlignment = UITextAlignment.Left,
-                Text = "Customer"
+                Text = "Date"
             };
-            View.AddSubview(customerLabel);
         }
 
-        private void CreateCustomerField()
+        private UILabel CreateDateField()
         {
-            var customerField = new UILabel()
+            return new UILabel()
             {
                 Frame = new CGRect(100, 80, View.Bounds.Width - 120, 32),
                 Font = UIFont.SystemFontOfSize(12),
                 TextAlignment = UITextAlignment.Left,
-                Text = "Some customer"
+                Text = TimesheetEntry.Date.ToString("dd MMM yyyy")
             };
-            View.AddSubview(customerField);
         }
 
-        private void CreateProjectLabel()
+        private UILabel CreateCustomerLabel()
         {
-            var projectLabel = new UILabel()
+            return new UILabel()
             {
                 Frame = new CGRect(20, 120, 80, 32),
                 Font = UIFont.BoldSystemFontOfSize(12),
                 TextAlignment = UITextAlignment.Left,
-                Text = "Project"
+                Text = "Customer"
             };
-            View.AddSubview(projectLabel);
         }
 
-        private void CreateProjectField()
+        private UILabel CreateCustomerField()
         {
-            var projectField = new UILabel()
+            return new UILabel()
             {
                 Frame = new CGRect(100, 120, View.Bounds.Width - 120, 32),
                 Font = UIFont.SystemFontOfSize(12),
                 TextAlignment = UITextAlignment.Left,
-                Text = "Some project"
+                Text = TimesheetEntry.Customer
             };
-            View.AddSubview(projectField);
         }
 
-        private void CreateHoursLabel()
+        private UILabel CreateProjectLabel()
         {
-            var hoursLabel = new UILabel()
+            return new UILabel()
             {
                 Frame = new CGRect(20, 160, 80, 32),
                 Font = UIFont.BoldSystemFontOfSize(12),
                 TextAlignment = UITextAlignment.Left,
-                Text = "Hours"
+                Text = "Project"
             };
-            View.AddSubview(hoursLabel);
         }
 
-        private void CreateHoursField()
+        private UILabel CreateProjectField()
         {
-            var hoursField = new UIPickerView()
+            return new UILabel()
             {
-                Frame = new CGRect(100, 160, View.Bounds.Width - 120, 40),
+                Frame = new CGRect(100, 160, View.Bounds.Width - 120, 32),
+                Font = UIFont.SystemFontOfSize(12),
+                TextAlignment = UITextAlignment.Left,
+                Text = TimesheetEntry.Project
             };
-            hoursField.Model = new TimesheetEntryHoursViewModel();
-            hoursField.Select(32, 0, true);
-            View.AddSubview(hoursField);
         }
 
-        private void CreateCommentLabel()
+        private UILabel CreateHoursLabel()
         {
-            var commentLabel = new UILabel()
+            return new UILabel()
             {
                 Frame = new CGRect(20, 200, 80, 32),
                 Font = UIFont.BoldSystemFontOfSize(12),
                 TextAlignment = UITextAlignment.Left,
-                Text = "Comment"
+                Text = "Hours"
             };
-            View.AddSubview(commentLabel);
         }
 
-        private void CreateCommentField()
+        private UIPickerView CreateHoursField()
         {
-            var commentField = new UITextField()
+            var hoursField = new UIPickerView()
             {
-                Frame = new CGRect(100, 200, View.Bounds.Width - 120, 32),
-                KeyboardType = UIKeyboardType.Default,
-                BorderStyle = UITextBorderStyle.RoundedRect,
-                Placeholder = ""
+                Frame = new CGRect(100, 200, View.Bounds.Width - 120, 40),
             };
-            View.AddSubview(commentField);
+            hoursField.Model = new TimesheetEntryHoursViewModel();
+            hoursField.Select(32, 0, true);
+            return hoursField;
         }
 
-        private void CreateSickLeaveLabel()
+        private UILabel CreateCommentLabel()
         {
-            var sickLeaveLabel = new UILabel()
+            return new UILabel()
             {
                 Frame = new CGRect(20, 240, 80, 32),
                 Font = UIFont.BoldSystemFontOfSize(12),
                 TextAlignment = UITextAlignment.Left,
-                Text = "Sick Leave"
+                Text = "Comment"
             };
-            View.AddSubview(sickLeaveLabel);
         }
 
-        private void CreateSickLeaveField()
+        private UITextField CreateCommentField()
+        {
+            return new UITextField()
+            {
+                Frame = new CGRect(100, 240, View.Bounds.Width - 120, 32),
+                KeyboardType = UIKeyboardType.Default,
+                BorderStyle = UITextBorderStyle.RoundedRect,
+                Placeholder = ""
+            };
+            //commentField.ShouldReturn += (IUITextFieldDelegate.)
+        }
+
+        private UILabel CreateSickLeaveLabel()
+        {
+            return new UILabel()
+            {
+                Frame = new CGRect(20, 280, 80, 32),
+                Font = UIFont.BoldSystemFontOfSize(12),
+                TextAlignment = UITextAlignment.Left,
+                Text = "Sick Leave"
+            };
+        }
+
+        private UISwitch CreateSickLeaveField()
         {
             var sickLeaveField = new UISwitch()
             {
                 Frame = CGRect.Empty
             };
             sickLeaveField.Transform = CGAffineTransform.MakeScale((nfloat)1, (nfloat)1);
-            sickLeaveField.Frame = new CGRect(View.Bounds.Width - sickLeaveField.Frame.Size.Width - 20, 240, sickLeaveField.Frame.Size.Width, sickLeaveField.Frame.Size.Height);
-            View.AddSubview(sickLeaveField);
+            sickLeaveField.Frame = new CGRect(View.Bounds.Width - sickLeaveField.Frame.Size.Width - 20, 280, sickLeaveField.Frame.Size.Width, sickLeaveField.Frame.Size.Height);
+            return sickLeaveField;
         }
 
-        private void CreateSubmitButton()
+        private UIButton CreateSubmitButton()
         {
             var submitButton = new UIButton(UIButtonType.System)
             {
-                Frame = new CGRect(20, 280, View.Bounds.Width - 40, 32),
+                Frame = new CGRect(20, 320, View.Bounds.Width - 40, 32),
             };
             submitButton.SetTitle("Submit", UIControlState.Normal);
-            View.AddSubview(submitButton);
+            return submitButton;
         }
     }
 
@@ -216,6 +225,11 @@ namespace TimesheetX.iOS.Code
             label.Font = UIFont.SystemFontOfSize(12);
             label.TextColor = UIColor.Black;
             return label;
+        }
+
+        public double SelectedValue(UIPickerView picker, nint row, nint component)
+        {
+            return Hours.ElementAt(Convert.ToInt32(row));
         }
     }
 }

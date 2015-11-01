@@ -25,7 +25,9 @@ namespace TimesheetX.iOS.Code
             window = new UIWindow(UIScreen.MainScreen.Bounds);
 
             // If you have defined a view, add it here:
-            window.RootViewController = new TimesheetEntryController();
+            var outstandingTimesheetsController = new OutstandingTimesheetsController();
+            var navController = new UINavigationController(outstandingTimesheetsController);
+            window.RootViewController = navController;
 
             // make the window visible
             window.MakeKeyAndVisible();
