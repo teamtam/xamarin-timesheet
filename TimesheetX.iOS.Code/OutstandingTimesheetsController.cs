@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using CoreGraphics;
 using Foundation;
 using UIKit;
 using TimesheetX.Models;
@@ -11,27 +11,39 @@ namespace TimesheetX.iOS.Code
 {
     public partial class OutstandingTimesheetsController : UIViewController
     {
+        private LoadingOverlay LoadingOverlay;
+
         public OutstandingTimesheetsController() : base("OutstandingTimesheetsController", null)
         {
         }
 
-        public override void ViewDidLoad()
+        public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
 
             var tableView = new UITableView(View.Bounds);
             tableView.ContentInset = new UIEdgeInsets(0, 0, 0, 0);
-            // TODO: progress indicator & await
+            ShowLoadingOverlay();
             try
             {
-                var timesheets = Task.Run(TimesheetService.GetTimesheetEntries).Result;
+                var timesheets = await TimesheetService.GetTimesheetEntries();
                 tableView.Source = new OutstandingTimesheetsSource(NavigationController, timesheets);
             }
             catch (Exception)
             {
-                // TODO: modal error message
+                // TODO: error & modal
             }
+            LoadingOverlay.Hide();
             View.AddSubview(tableView);
+        }
+
+        public void ShowLoadingOverlay()
+        {
+            var bounds = UIScreen.MainScreen.Bounds;
+            if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight)
+                bounds.Size = new CGSize(bounds.Size.Height, bounds.Size.Width);
+            LoadingOverlay = new LoadingOverlay(bounds);
+            View.Add(LoadingOverlay);
         }
 
         public class OutstandingTimesheetsSource : UITableViewSource

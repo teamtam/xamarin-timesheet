@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using CoreGraphics;
 using UIKit;
 using TimesheetX.Models;
@@ -11,6 +10,7 @@ namespace TimesheetX.iOS.Code
 {
     public partial class TimesheetEntryController : UIViewController
     {
+        private LoadingOverlay LoadingOverlay;
         public TimesheetEntry TimesheetEntry;
 
         public TimesheetEntryController() : base("TimesheetEntryController", null)
@@ -33,18 +33,7 @@ namespace TimesheetX.iOS.Code
             var commentField = CreateCommentField();
             var sickLeaveLabel = CreateSickLeaveLabel();
             var sickLeaveField = CreateSickLeaveField();
-            var submitButton = CreateSubmitButton();
-
-            submitButton.TouchUpInside += (sender, e) =>
-            {
-                var timesheetEntryHoursViewModel = (TimesheetEntryHoursViewModel)hoursField.Model;
-                var selectedHours = timesheetEntryHoursViewModel.SelectedValue(hoursField, hoursField.SelectedRowInComponent(0), 0);
-                TimesheetEntry.Hours = Convert.ToDecimal(selectedHours);
-                TimesheetEntry.Comment = commentField.Text;
-                TimesheetEntry.SickLeave = sickLeaveField.On;
-                //Task.Run(TimesheetService.SubmitTimesheetEntry(TimesheetEntry)).Result; // TODO: async & spinner & error
-                NavigationController.PopViewController(true);
-            };
+            var submitButton = CreateSubmitButton(hoursField, commentField, sickLeaveField);
 
             View.AddSubviews(dateLabel, dateField, customerLabel, customerField, projectLabel, projectField, hoursLabel, hoursField, commentLabel, commentField, sickLeaveLabel, sickLeaveField, submitButton);
         }
@@ -157,7 +146,7 @@ namespace TimesheetX.iOS.Code
                 BorderStyle = UITextBorderStyle.RoundedRect,
                 Placeholder = ""
             };
-            //commentField.ShouldReturn += (IUITextFieldDelegate.)
+            // TODO: resign first responder commentField.ShouldReturn += (IUITextFieldDelegate.)
         }
 
         private UILabel CreateSickLeaveLabel()
@@ -182,14 +171,47 @@ namespace TimesheetX.iOS.Code
             return sickLeaveField;
         }
 
-        private UIButton CreateSubmitButton()
+        private UIButton CreateSubmitButton(UIPickerView hoursField, UITextField commentField, UISwitch sickLeaveField)
         {
             var submitButton = new UIButton(UIButtonType.System)
             {
                 Frame = new CGRect(20, 320, View.Bounds.Width - 40, 32),
             };
             submitButton.SetTitle("Submit", UIControlState.Normal);
+            submitButton.TouchUpInside += async (sender, e) =>
+            {
+                var timesheetEntryHoursViewModel = (TimesheetEntryHoursViewModel)hoursField.Model;
+                var selectedHours = timesheetEntryHoursViewModel.SelectedValue(hoursField, hoursField.SelectedRowInComponent(0), 0);
+                TimesheetEntry.Hours = Convert.ToDecimal(selectedHours);
+                TimesheetEntry.Comment = commentField.Text;
+                TimesheetEntry.SickLeave = sickLeaveField.On;
+                ShowLoadingOverlay();
+                //var controller = new ModalPopupController();
+                //controller.ModalPresentationStyle = UIModalPresentationStyle.FormSheet;
+                //controller.View.BackgroundColor = UIColor.White;
+                //controller.View.Opaque = true;
+                //PresentViewController(controller, true, null);
+                try
+                {
+                    await TimesheetService.SubmitTimesheetEntry(TimesheetEntry);
+                }
+                catch (Exception)
+                {
+                    // TODO: error & modal
+                }
+                LoadingOverlay.Hide();
+                NavigationController.PopViewController(true);
+            };
             return submitButton;
+        }
+
+        public void ShowLoadingOverlay()
+        {
+            var bounds = UIScreen.MainScreen.Bounds;
+            if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight)
+                bounds.Size = new CGSize(bounds.Size.Height, bounds.Size.Width);
+            LoadingOverlay = new LoadingOverlay(bounds);
+            View.Add(LoadingOverlay);
         }
     }
 
