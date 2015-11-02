@@ -11,7 +11,7 @@ namespace TimesheetX.iOS.Code
         private UIActivityIndicatorView activitySpinner;
         private UILabel loadingLabel;
 
-        public LoadingOverlay(CGRect frame) : base(frame)
+        public LoadingOverlay(CGRect frame, string message) : base(frame)
         {
             // configurable bits
             BackgroundColor = UIColor.Black;
@@ -45,7 +45,7 @@ namespace TimesheetX.iOS.Code
             ));
             loadingLabel.BackgroundColor = UIColor.Clear;
             loadingLabel.TextColor = UIColor.White;
-            loadingLabel.Text = "Loading ...";
+            loadingLabel.Text = message;
             loadingLabel.TextAlignment = UITextAlignment.Center;
             loadingLabel.AutoresizingMask = UIViewAutoresizing.All;
             AddSubview(loadingLabel);

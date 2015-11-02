@@ -34,8 +34,11 @@ namespace TimesheetX.iOS.Code
             var sickLeaveLabel = CreateSickLeaveLabel();
             var sickLeaveField = CreateSickLeaveField();
             var submitButton = CreateSubmitButton(hoursField, commentField, sickLeaveField);
-
             View.AddSubviews(dateLabel, dateField, customerLabel, customerField, projectLabel, projectField, hoursLabel, hoursField, commentLabel, commentField, sickLeaveLabel, sickLeaveField, submitButton);
+
+            var gestureRecognizer = new UITapGestureRecognizer(() => View.EndEditing(true));
+            gestureRecognizer.CancelsTouchesInView = false; // NOTE: for iOS5
+            View.AddGestureRecognizer(gestureRecognizer);
         }
 
         private UILabel CreateDateLabel()
@@ -139,14 +142,19 @@ namespace TimesheetX.iOS.Code
 
         private UITextField CreateCommentField()
         {
-            return new UITextField()
+            var commentField = new UITextField()
             {
                 Frame = new CGRect(100, 240, View.Bounds.Width - 120, 32),
                 KeyboardType = UIKeyboardType.Default,
                 BorderStyle = UITextBorderStyle.RoundedRect,
                 Placeholder = ""
             };
-            // TODO: resign first responder commentField.ShouldReturn += (IUITextFieldDelegate.)
+            commentField.ShouldReturn += (textField) =>
+            {
+                textField.ResignFirstResponder();
+                return true;
+            };
+            return commentField;
         }
 
         private UILabel CreateSickLeaveLabel()
@@ -205,12 +213,12 @@ namespace TimesheetX.iOS.Code
             return submitButton;
         }
 
-        public void ShowLoadingOverlay()
+        private void ShowLoadingOverlay()
         {
             var bounds = UIScreen.MainScreen.Bounds;
             if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight)
                 bounds.Size = new CGSize(bounds.Size.Height, bounds.Size.Width);
-            LoadingOverlay = new LoadingOverlay(bounds);
+            LoadingOverlay = new LoadingOverlay(bounds, "Saving...");
             View.Add(LoadingOverlay);
         }
     }
