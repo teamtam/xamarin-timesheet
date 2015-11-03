@@ -87,10 +87,6 @@
     <Compile Include="LoadingOverlayView.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="ModalPopupController.cs" />
-    <Compile Include="ModalPopupController.designer.cs">
-      <DependentUpon>ModalPopupController.cs</DependentUpon>
-    </Compile>
     <Compile Include="TimesheetEntryController.cs" />
     <Compile Include="TimesheetEntryController.designer.cs">
       <DependentUpon>TimesheetEntryController.cs</DependentUpon>

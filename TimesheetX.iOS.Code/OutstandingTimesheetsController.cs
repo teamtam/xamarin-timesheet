@@ -11,7 +11,7 @@ namespace TimesheetX.iOS.Code
 {
     public partial class OutstandingTimesheetsController : UIViewController
     {
-        private LoadingOverlay LoadingOverlay;
+        //private LoadingOverlay LoadingOverlay;
 
         public OutstandingTimesheetsController() : base("OutstandingTimesheetsController", null)
         {
@@ -23,20 +23,24 @@ namespace TimesheetX.iOS.Code
 
             var tableView = new UITableView(View.Bounds);
             tableView.ContentInset = new UIEdgeInsets(0, 0, 0, 0);
-            ShowLoadingOverlay();
+            // TODO: loading overlay changes the inset
+            // ShowLoadingOverlay();
             try
             {
                 var timesheets = await TimesheetService.GetTimesheetEntries();
                 tableView.Source = new OutstandingTimesheetsSource(NavigationController, timesheets);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: error & modal
+                var okAlertController = UIAlertController.Create("Error", ex.Message, UIAlertControllerStyle.Alert);
+                okAlertController.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
+                PresentViewController(okAlertController, true, null);
             }
-            LoadingOverlay.Hide();
+            // LoadingOverlay.Hide();
             View.AddSubview(tableView);
         }
 
+        /*
         public void ShowLoadingOverlay()
         {
             var bounds = UIScreen.MainScreen.Bounds;
@@ -45,6 +49,7 @@ namespace TimesheetX.iOS.Code
             LoadingOverlay = new LoadingOverlay(bounds);
             View.Add(LoadingOverlay);
         }
+        */
 
         public class OutstandingTimesheetsSource : UITableViewSource
         {

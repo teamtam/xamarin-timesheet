@@ -194,21 +194,18 @@ namespace TimesheetX.iOS.Code
                 TimesheetEntry.Comment = commentField.Text;
                 TimesheetEntry.SickLeave = sickLeaveField.On;
                 ShowLoadingOverlay();
-                //var controller = new ModalPopupController();
-                //controller.ModalPresentationStyle = UIModalPresentationStyle.FormSheet;
-                //controller.View.BackgroundColor = UIColor.White;
-                //controller.View.Opaque = true;
-                //PresentViewController(controller, true, null);
                 try
                 {
                     await TimesheetService.SubmitTimesheetEntry(TimesheetEntry);
+                    NavigationController.PopViewController(true);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // TODO: error & modal
+                    var okAlertController = UIAlertController.Create("Error", ex.Message, UIAlertControllerStyle.Alert);
+                    okAlertController.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
+                    PresentViewController(okAlertController, true, null);
                 }
                 LoadingOverlay.Hide();
-                NavigationController.PopViewController(true);
             };
             return submitButton;
         }
