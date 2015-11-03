@@ -11,7 +11,7 @@ namespace TimesheetX.iOS.Code
 {
     public partial class OutstandingTimesheetsController : UIViewController
     {
-        //private LoadingOverlay LoadingOverlay;
+        private LoadingOverlay LoadingOverlay;
 
         public OutstandingTimesheetsController() : base("OutstandingTimesheetsController", null)
         {
@@ -21,10 +21,11 @@ namespace TimesheetX.iOS.Code
         {
             base.ViewDidLoad();
 
+            AutomaticallyAdjustsScrollViewInsets = false; // NOTE: for iOS7+
             var tableView = new UITableView(View.Bounds);
-            tableView.ContentInset = new UIEdgeInsets(0, 0, 0, 0);
-            // TODO: loading overlay changes the inset
-            // ShowLoadingOverlay();
+            tableView.ContentInset = new UIEdgeInsets(64, 0, 0, 0);
+            tableView.SeparatorInset = new UIEdgeInsets(0, 20, 0, 0);
+            ShowLoadingOverlay();
             try
             {
                 var timesheets = await TimesheetService.GetTimesheetEntries();
@@ -36,20 +37,18 @@ namespace TimesheetX.iOS.Code
                 okAlertController.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
                 PresentViewController(okAlertController, true, null);
             }
-            // LoadingOverlay.Hide();
+            LoadingOverlay.Hide();
             View.AddSubview(tableView);
         }
 
-        /*
         public void ShowLoadingOverlay()
         {
             var bounds = UIScreen.MainScreen.Bounds;
             if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight)
                 bounds.Size = new CGSize(bounds.Size.Height, bounds.Size.Width);
-            LoadingOverlay = new LoadingOverlay(bounds);
+            LoadingOverlay = new LoadingOverlay(bounds, "Loading...");
             View.Add(LoadingOverlay);
         }
-        */
 
         public class OutstandingTimesheetsSource : UITableViewSource
         {
