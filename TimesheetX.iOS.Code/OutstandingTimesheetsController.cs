@@ -56,6 +56,8 @@ namespace TimesheetX.iOS.Code
             private readonly UINavigationController NavigationController;
             private readonly IList<TimesheetEntry> Timesheets;
 
+            private readonly NSString CELL_IDENTIFIER = new NSString("OutstandingTimesheetsCell");
+
             public OutstandingTimesheetsSource(UINavigationController navigationController, IEnumerable<TimesheetEntry> timesheets)
             {
                 NavigationController = navigationController;
@@ -69,11 +71,11 @@ namespace TimesheetX.iOS.Code
 
             public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
             {
-                // TODO: custom table cell https://developer.xamarin.com/guides/ios/user_interface/tables/part_3_-_customizing_a_table's_appearance/
                 var timesheet = Timesheets.ElementAt(indexPath.Row);
-                var cell = new UITableViewCell(UITableViewCellStyle.Subtitle, null);
-                cell.TextLabel.Text = timesheet.Date.ToString("dd MMM yyyy");
-                cell.DetailTextLabel.Text = timesheet.Customer + ": " + timesheet.Project;
+                var cell = tableView.DequeueReusableCell(CELL_IDENTIFIER) as OutstandingTimesheetsCell;
+                if (cell == null)
+                    cell = new OutstandingTimesheetsCell(CELL_IDENTIFIER);
+                cell.UpdateCell(timesheet.Date, timesheet.Customer, timesheet.Project);
                 cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
                 return cell;
             }
@@ -85,6 +87,42 @@ namespace TimesheetX.iOS.Code
                 NavigationController.PushViewController(timesheetEntryController, true);
                 tableView.DeselectRow(indexPath, true);
             }
+
+            public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+            {
+                return 58;
+            }
+        }
+    }
+
+    public class OutstandingTimesheetsCell : UITableViewCell
+    {
+        private UILabel DateField;
+        private UILabel CustomerField;
+        private UILabel ProjectField;
+
+        public OutstandingTimesheetsCell(NSString cellId) : base(UITableViewCellStyle.Default, cellId)
+        {
+            SelectionStyle = UITableViewCellSelectionStyle.Gray;
+            DateField = new UILabel() { Font = UIFont.BoldSystemFontOfSize(14) };
+            CustomerField = new UILabel() { Font = UIFont.SystemFontOfSize(12) };
+            ProjectField = new UILabel() { Font = UIFont.SystemFontOfSize(12) };
+            ContentView.AddSubviews(new UIView[] { DateField, CustomerField, ProjectField });
+        }
+
+        public void UpdateCell(DateTime date, string customer, string project)
+        {
+            DateField.Text = date.ToString("dd MMM yyyy");
+            CustomerField.Text = customer;
+            ProjectField.Text = project;
+        }
+
+        public override void LayoutSubviews()
+        {
+            base.LayoutSubviews();
+            DateField.Frame = new CGRect(20, 0, ContentView.Bounds.Width - 40, 20);
+            CustomerField.Frame = new CGRect(20, 20, ContentView.Bounds.Width - 40, 19);
+            ProjectField.Frame = new CGRect(20, 39, ContentView.Bounds.Width - 40, 19);
         }
     }
 }
