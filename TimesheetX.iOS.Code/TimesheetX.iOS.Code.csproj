@@ -91,7 +91,6 @@
     <Compile Include="TimesheetEntryController.designer.cs">
       <DependentUpon>TimesheetEntryController.cs</DependentUpon>
     </Compile>
-    <None Include="GettingStarted.Xamarin" />
     <None Include="Info.plist" />
     <Compile Include="OutstandingTimesheetsController.cs" />
     <Compile Include="OutstandingTimesheetsController.designer.cs">
