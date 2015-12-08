@@ -13,10 +13,6 @@ namespace TimesheetX.iOS.Code
     {
         private LoadingOverlay LoadingOverlay;
 
-        public OutstandingTimesheetsController() : base("OutstandingTimesheetsController", null)
-        {
-        }
-
         public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
